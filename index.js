@@ -27,12 +27,22 @@ pool = new Pool({
 // Task 1
 
 router.get('/menu', async ctx => {
-    const { rows } = await pool.query('SELECT * FROM menu_item');
+    const { rows } = await pool.query('SELECT * FROM menu_item;');
     ctx.body = rows;
 });
 
 // Task 2
 
+router.post('/checkout', async ctx => {
+    const {
+        orderDate,
+        orderTotal
+    } = ctx.request.body;
+    const newOrder = await pool.query(
+        `INSERT INTO customer_order VALUES (DEFAULT, '${orderDate}', ${orderTotal}) RETURNING *;`
+    );
+    ctx.body = newOrder.rows;
+});
 //
 // ─── BOOKING QUERIES ────────────────────────────────────────────────────────────
 //
