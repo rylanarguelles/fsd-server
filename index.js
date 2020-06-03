@@ -49,11 +49,51 @@ router.post('/checkout', async ctx => {
 
 // Task 1
 
+router.get('/booking', async ctx => {
+    const { rows } = await pool.query('SELECT * FROM booking;');
+    ctx.body = rows;
+});
+
 // Task 2
+
+router.post('/add-booking', async ctx => {
+    const {
+        bookingDate, 
+        bookingTime,
+        email,
+        mobileNumber 
+    } = ctx.request.body;
+    const newBooking = await pool.query(
+        `INSERT INTO booking VALUES (DEFAULT, '${bookingDate}', '${bookingTime}', '${email}', '${mobileNumber}') RETURNING *;`
+    );
+    ctx.body = newBooking.rows;
+});
 
 // Task 3
 
+router.post('/update-booking', async ctx => {
+    const { 
+        bookingId,
+        bookingDate,
+        bookingTime 
+    } = ctx.request.body;
+    const newBooking = await pool.query(
+        `UPDATE booking SET booking_date = '${bookingDate}', booking_time = '${bookingTime}' WHERE booking_id = ${bookingId} RETURNING *;`
+    );
+    ctx.body = newBooking.rows;
+});
+
 // Task 4
+
+router.post('/delete-booking', async ctx => {
+    const {
+        bookingId
+    } = ctx.request.body;
+    const newBooking = await pool.query(
+        `DELETE FROM booking WHERE booking_id = ${bookingId} RETURNING *;`
+    );
+    ctx.body = newBooking.rows;
+});
 
 // You should see this in your console if you are successful in running the server.
 // To run the server, type "npm start" in your project terminal.
