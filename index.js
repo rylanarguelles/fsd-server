@@ -46,50 +46,47 @@ router.post('/checkout', async (ctx) => {
 
 // Task 1
 
-router.get('/booking', async ctx => {
+router.get('/booking', async (ctx) => {
     const { rows } = await pool.query('SELECT * FROM booking;');
     ctx.body = rows;
 });
 
 // Task 2
 
-router.post('/add-booking', async ctx => {
+router.post('/add-booking/', async (ctx) => {
     const {
-        bookingDate, 
+        bookingDate,
         bookingTime,
         email,
-        mobileNumber 
+        mobileNumber,
+        quantity,
     } = ctx.request.body;
     const newBooking = await pool.query(
-        `INSERT INTO booking VALUES (DEFAULT, '${bookingDate}', '${bookingTime}', '${email}', '${mobileNumber}') RETURNING *;`
+        `INSERT INTO booking VALUES (DEFAULT, '${bookingDate}', '${bookingTime}', '${email}', 
+        '${mobileNumber}', ${quantity}) RETURNING *;`,
     );
     ctx.body = newBooking.rows;
 });
 
 // Task 3
 
-router.post('/update-booking', async ctx => {
-    const { 
-        bookingId,
-        bookingDate,
-        bookingTime 
-    } = ctx.request.body;
-    const newBooking = await pool.query(
-        `UPDATE booking SET booking_date = '${bookingDate}', booking_time = '${bookingTime}' WHERE booking_id = ${bookingId} RETURNING *;`
+router.post('/update-booking/', async (ctx) => {
+    const { bookingId, bookingDate, bookingTime, quantity } = ctx.request.body;
+    const updateBooking = await pool.query(
+        `UPDATE booking SET booking_date = '${bookingDate}', booking_time = '${bookingTime}', 
+        quantity = ${quantity} WHERE booking_id = ${bookingId} RETURNING *;`,
     );
-    ctx.body = newBooking.rows;
+    ctx.body = updateBooking.rows;
 });
 
 // Task 4
 
-router.post('/delete-booking', async ctx => {
-    const {
-        bookingId
-    } = ctx.request.body;
-    const newBooking = await pool.query(
-        `DELETE FROM booking WHERE booking_id = ${bookingId} RETURNING *;`
+router.post('/delete-booking/', async (ctx) => {
+    const { bookingId } = ctx.request.body;
+    const deletedBooking = await pool.query(
+        `DELETE FROM booking WHERE booking_id = ${bookingId} RETURNING *;`,
     );
-    ctx.body = newBooking.rows;
+    ctx.body = deletedBooking.rows;
 });
 
 // You should see this in your console if you are successful in running the server.
